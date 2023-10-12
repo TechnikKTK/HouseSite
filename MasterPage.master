@@ -68,7 +68,7 @@
     <script src="/js/tabs.js"></script>
     <script src="/js/popup.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>--%>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>
     <script src="app.js" type="module"></script>
     <script type="module">
         import { getMessaging, onMessage, getToken } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging.js";
