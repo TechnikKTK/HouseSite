@@ -1,0 +1,67 @@
+﻿<%@ Master Language="C#"  AutoEventWireup="true" CodeFile="AdminMasterPage.master.cs" Inherits="Admin_AdminMasterPage" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Админпанель</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/animate.css" />
+    <link rel="stylesheet" href="/css/fontawesome.min.css" />
+    <link rel="stylesheet" href="/css/owl.theme.css" />
+    <link rel="stylesheet" href="/css/owl.carousel.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
+    <link href="/css/app.css" rel="stylesheet" />
+    <link href="/css/all.min.css" rel="stylesheet" />
+    <script src="/js/jquery.min.js"></script>
+
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+       <nav class="navbar navbar-expand-lg bg-light fixed-top">
+            <div class="container-fluid">
+                <i class="fa-solid fa-building-user"></i><span class="my-banner">Панель администратора</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <asp:ContentPlaceHolder ID="ContentNav" runat="server">
+                        </asp:ContentPlaceHolder>
+                        <li class="nav-item">
+                            <asp:Button ID="btn_exit" runat="server" PostBackUrl="~/Exit.aspx" Text="Выйти" CssClass="btn btn-primary btn-exit" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+<%--         <asp:ScriptManager ID="ScriptManager" runat="server">
+                <Services>
+                    <asp:ServiceReference Path="AjaxService.asmx" />
+                </Services>
+         </asp:ScriptManager>--%>
+        <div class="container-fluid p-4" style="background-color:#ffffffe6;margin-top: 40px;">
+            <asp:ContentPlaceHolder id="MainContent" runat="server">        
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+
+    <!-- Scripts -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script src="/js/owl-carousel.js"></script>
+
+    <script src="/js/tabs.js"></script>
+    <script src="/js/popup.js"></script>
+</body>
+</html>

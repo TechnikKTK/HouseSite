@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="Default.aspx" title="Root"  description="" roles="admin">
+    <siteMapNode title="Сообщения жильцов" url="~/Admin/Messages.aspx" roles="admin" >
+    </siteMapNode>
+    <siteMapNode title="Пользователи" url="~/Admin/Users.aspx" roles="admin" >
+    </siteMapNode>
+    <siteMapNode title="Выход" url="~/Exit.aspx" roles="admin" >
+    </siteMapNode>
+   <!-- <siteMapNode title="Отчеты" url="" roles="admin" >
+          <siteMapNode title="Активность пользователей" url="~\Admin\ConnectionInfo.aspx" roles="admin" ></siteMapNode>
+          <siteMapNode title="Журнал событий" url="~\Admin\Events.aspx" roles="admin" ></siteMapNode>
+          <siteMapNode title="Сообщения пользователей" url="~\Admin\UserMessage.aspx" roles="admin" ></siteMapNode>
+    </siteMapNode>-->
+  </siteMapNode>
+</siteMap>
