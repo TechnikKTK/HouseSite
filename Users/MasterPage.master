@@ -104,9 +104,9 @@
                     var notification = {
                         body: payload.notification.body,
                         click_action: '/notify',
-                        icon:  payload.notification.icon,
-                        image:  payload.notification.image,
-                        title:  payload.notification.title
+                        icon: '/favicon.ico',
+                        image: payload.notification.image ? payload.notification.image : '',
+                        title: payload.notification.title
                     };
 
                     registration.showNotification(

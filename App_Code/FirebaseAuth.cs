@@ -3,13 +3,7 @@ using FirebaseAdmin.Auth;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.ServiceModel.Activities;
 using System.Threading.Tasks;
-using System.Web;
-using System.Windows.Forms;
 
 /// <summary>
 /// Сводное описание для FirebaseAuth
@@ -17,7 +11,6 @@ using System.Windows.Forms;
 public static class FcmService
 {
     public static readonly string path = System.Web.Hosting.HostingEnvironment.MapPath("~/json/housesite-35175-firebase-adminsdk-av4l6-e66943f3b8.json");
-    static string bearertoken = "";
     static FirebaseApp app;
     public static Task<bool> Init()
     {
@@ -52,7 +45,7 @@ public static class FcmService
         }
     }
 
-    public static async Task SendFcmMessageAsync(string token, string title, string body, string image = "")
+    public static async Task<string> SendFcmMessageAsync(string token, string title, string body, string image = "")
     {
         await Init();
 
@@ -61,10 +54,6 @@ public static class FcmService
         var message = new FirebaseAdmin.Messaging.Message()
         {
             Token = token,
-            FcmOptions = new FcmOptions
-            {
-                AnalyticsLabel= title,
-            },
             Webpush = new WebpushConfig
             {
                 Notification = new WebpushNotification()
@@ -107,10 +96,19 @@ public static class FcmService
         };
 
         var result = await messaging.SendAsync(message).ConfigureAwait(false);
+        return result;
     }
 
-    public static void SendMessage(string token, string title, string body, string image="")
+    public static void SendMessage(Guid userKey,string token, string title, string body, string strConn)
     {
-        Task.Run(async()=> await SendFcmMessageAsync(token, title, body, image));
+        Task.Run(async () =>
+        {
+            var result = await SendFcmMessageAsync(token, title, body).ConfigureAwait(false);
+
+            if (result != null)
+            {
+                HouseSiteService.SaveFcmMessages(userKey,result,token,strConn);
+            }
+        });
     }
 }

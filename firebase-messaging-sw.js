@@ -36,13 +36,15 @@ function onBackgroundMessage() {
         }
 
         // Customize notification here
-        const notificationTitle = 'Background Message Title';
-        const notificationOptions = {
-            body: 'Background Message body.',
-            icon: '/firebase-logo.png'
+        var notification = {
+            body: payload.notification.body,
+            click_action: '/notify',
+            icon: '/favicon.ico',
+            image: payload.notification.image ? payload.notification.image: '',
+            title: payload.notification.title
         };
 
-        self.registration.showNotification(notificationTitle, notificationOptions);
+        self.registration.showNotification(notification.title, notification);
     });
     // [END messaging_on_background_message]
 }

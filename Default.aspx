@@ -119,11 +119,11 @@
                     console.log('Message received. ', payload);
 
                     var notification = {
-                        body: "It's found today at 9:39",
-                        click_action: "https://www.nasa.gov/feature/goddard/2016/hubble-sees-a-star-inflating-a-giant-bubble",
-                        icon: "https://peter-gribanov.github.io/serviceworker/Bubble-Nebula.jpg",
-                        image: "https://peter-gribanov.github.io/serviceworker/Bubble-Nebula_big.jpg",
-                        title: "Bubble Nebula"
+                        body: payload.notification.body,
+                        click_action: '/notify',
+                        icon: '/favicon.ico',
+                        image: payload.notification.image,
+                        title: payload.notification.title
                     };
 
                     registration.showNotification(

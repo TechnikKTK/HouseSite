@@ -14,28 +14,21 @@ using System.Web.Security;
 /// </summary>
 public class HouseSiteService
 {
-    public HouseSiteService()
-    {
-        //
-        // TODO: добавьте логику конструктора
-        //
-    }
-
-    public static HouseSiteService Instance { get; set; }
-
     public static void SetLockBarrier(MembershipUser user, bool isLocked, string conString)
     {
         var message = "";
         var body = "";
-        if(isLocked)
+        var notify_body = "";
+        if (isLocked)
         {
             message = "Доступ к шлагбауму ограничен. ";
-            body = "Обратитесь <a href=\"mailto:admin@podm8.ru\">admin@podm8.ru</a>";
+            body = "Обратитесь к <a href=\"mailto:admin@podm8.ru\">admin@podm8.ru</a>";
+            notify_body = "Обратитесь к вашему администратору admin@podm8.ru";
         }
         else
         {
             message = "Доступ к шлакбауму восстановлен";
-            body = string.Format("{0: dd.MM.yyyy HH:mm}", DateTime.Now);
+            body = notify_body = string.Format("{0: dd.MM.yyyy HH:mm}", DateTime.Now);
         }
 
         using (SqlConnection _connection = new SqlConnection(conString))
@@ -46,7 +39,7 @@ public class HouseSiteService
             cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
             cmd.Parameters.Add("@CreatedAt", SqlDbType.DateTime2).Value = DateTime.Now;
             cmd.Parameters.Add("@Message", SqlDbType.NVarChar).Value = message + body;
-            cmd.Parameters.Add("@Type", SqlDbType.Int).Value = isLocked? 2:1;
+            cmd.Parameters.Add("@Type", SqlDbType.Int).Value = isLocked ? 2 : 1;
             cmd.Parameters.Add("@IsRead", SqlDbType.Bit).Value = false;
 
             cmd.ExecuteNonQuery();
@@ -55,10 +48,27 @@ public class HouseSiteService
 
         foreach (var item in GetUserTokens((Guid)user.ProviderUserKey, conString))
         {
-            FcmService.SendMessage(item, message, body);
+            FcmService.SendMessage((Guid)user.ProviderUserKey, item, message, notify_body, conString);
         }
     }
 
+    public static void SaveFcmMessages(Guid userKey, string messageID, string token, string conString)
+    {
+        using (SqlConnection _connection = new SqlConnection(conString))
+        {
+            _connection.Open();
+            var cmd = new SqlCommand("Insert Into hs_FcmMessagess VALUES(@MessageID," +
+                "@UserID,@DeviceToken,@SendAt)", _connection);
+
+            cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userKey;
+            cmd.Parameters.Add("@SendAt", SqlDbType.DateTime2).Value = DateTime.Now;
+            cmd.Parameters.Add("@DeviceToken", SqlDbType.VarChar).Value = token;
+            cmd.Parameters.Add("@MessageID", SqlDbType.VarChar).Value = messageID;
+
+            cmd.ExecuteNonQuery();
+            _connection.Close();
+        }
+    }
 
     public static List<string> GetUserTokens(Guid userKey, string conString)
     {
