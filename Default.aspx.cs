@@ -11,7 +11,7 @@ public partial class _Default : System.Web.UI.Page
             {
                 Response.Redirect("~/admin/users");
             }
-            Response.Redirect("/fcm");
+            Response.Redirect("/dashboard");
         }
     }
 }

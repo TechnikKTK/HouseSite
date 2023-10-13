@@ -11,7 +11,7 @@ public partial class SendFcm : System.Web.UI.Page
     {
         if (Request.Form["token"] != null)
         {
-            Fcm.SendMessage(Request.Form["token"].ToString(), "Hello", "World");
+            FcmService.SendMessage(Request.Form["token"].ToString(), "Hello", "World");
             Response.Clear();
             Response.Write("OK");
         }

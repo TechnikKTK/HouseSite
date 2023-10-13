@@ -43,6 +43,25 @@ div:has(> #gvMessages) {
     overflow-x: auto;
 }
 
+.table .thead-dark th {
+    color: #fff;
+    background-color: #212529;
+    border-color: #32383e;
+}
+
+.container {
+    background-color: #fefefef5;
+    margin-top: 56px;
+    padding-top: 15px;
+    padding-bottom: 1px;
+}
+
+.table .thead-light th {
+    color: #495057;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
 
 @media (max-width: 990px) {
     .form 
@@ -62,4 +81,3 @@ div:has(> #gvMessages) {
         display: inherit;
     }
 }
-

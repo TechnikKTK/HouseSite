@@ -11,7 +11,7 @@ public partial class GetDeviceToken : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            var value = Request.Form["device"];
+            var value = Request.Form["token"];
             if(value != null)
             {
                 SetTokenByUser(value);
@@ -20,7 +20,7 @@ public partial class GetDeviceToken : System.Web.UI.Page
         }        
     }
 
-    private void SetTokenByUser(string value)
+    private void SetTokenByUser(string token)
     {
         MembershipUser user = Membership.GetUser();
         if (user != null)
@@ -32,9 +32,10 @@ public partial class GetDeviceToken : System.Web.UI.Page
                 {
                     _connection.Open();
 
-                    SqlCommand cmd = new SqlCommand("Select Count(DeviceToken) From hs_TokenDevices Where UserId = @UserId",_connection);
+                    SqlCommand cmd = new SqlCommand("Select Count(DeviceToken) From hs_TokenDevices Where UserId = @UserId AND DeviceToken = @Token", _connection);
 
                     cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
+                    cmd.Parameters.Add("@Token", SqlDbType.VarChar).Value = token;
 
                     var count = cmd.ExecuteScalar();
                     if (count != null)
@@ -46,7 +47,7 @@ public partial class GetDeviceToken : System.Web.UI.Page
 
                             cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
                             cmd.Parameters.Add("@Date", SqlDbType.DateTime).Value = DateTime.Now;
-                            cmd.Parameters.Add("@Token", SqlDbType.VarChar).Value = value;
+                            cmd.Parameters.Add("@Token", SqlDbType.VarChar).Value = token;
 
                             cmd.ExecuteNonQuery();
                             _connection.Close();

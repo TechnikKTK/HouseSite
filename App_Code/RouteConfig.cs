@@ -15,7 +15,7 @@ public class RouteConfig
         routes.MapPageRoute("dashboard", "dashboard", "~/Management.aspx");
         routes.MapPageRoute("notify", "notify", "~/MyNotify.aspx");
         routes.MapPageRoute("phone-by-auto", "phone-by-auto", "~/GetPhoneByAuto.aspx");
-        routes.MapPageRoute("fcm", "token", "~/GetDeviceToken.aspx");
+        routes.MapPageRoute("fcm", "save-token", "~/GetDeviceToken.aspx");
         routes.MapPageRoute("sndMess", "send-message", "~/SendMessage.aspx");
         routes.MapPageRoute("OkMess", "message-ok", "~/SendOk.aspx");
         routes.MapPageRoute("check_fcm", "fcm", "~/CheckFcm.aspx");

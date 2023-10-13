@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/owl.carousel.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
-    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/app.css?t=123" rel="stylesheet" />
     <link href="css/all.min.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
@@ -68,7 +68,7 @@
     <script src="/js/tabs.js"></script>
     <script src="/js/popup.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>
     <script src="app.js" type="module"></script>
     <script type="module">
         import { getMessaging, onMessage, getToken } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging.js";
@@ -88,7 +88,11 @@
             vapidKey: "BOolhDIKwbxYGInYx2V_IcA1fEyjy-o3jCbtv4pL89d7Ri9XcslDY6pu910PZNygkD6AlBNN6LX5Aroc-HObNEs"
         }).then((currentToken) => {
             if (currentToken) {
-                console.log(currentToken);
+                console.log('Token is ready');
+
+                $.post('/save-token', { token: currentToken }, function (data) {
+                    alert(data);
+                });
 
                 onMessage(messaging, (payload) => {
                     console.log('Message received. ', payload);
@@ -180,20 +184,22 @@
                 Myalert("Включите поддержку уведомлений в вашем браузере для этого сайта", 'warning', 5);
             }
 
+            // At last, if the user has denied notifications, and you
+            // want to be respectful there is no need to bother them anymore.
         }
 
         function RequestPermission() {
             Notification.requestPermission().then((permission) => {
                 // If the user accepts, let's create a notification
                 if (permission === "granted") {
-                    //    var notification = {
-                    //        body: "Мой Дом",
-                    //        click_action: "/notify",
-                    //        icon: "/favicon.ico",
-                    //        title: "Поздравляем. Вы включили уведомления!"
-                    //    };
-                    //    const grant_notification = new Notification(notification.title, notification);
-                    //    // …
+                    //var notification = {
+                    //    body: "Мой Дом",
+                    //    click_action: "/notify",
+                    //    icon: "/favicon.ico",
+                    //    title: "Поздравляем. Вы включили уведомления!"
+                    //};
+                    //const grant_notification = new Notification(notification.title, notification);
+                    // …
                     $("#myalert").html('');
                     Myalert("Уведомления включены!", 'info', 3);
                 }

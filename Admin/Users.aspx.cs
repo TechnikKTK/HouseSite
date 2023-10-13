@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Linq;
 
 public partial class Admin_Users : System.Web.UI.Page
 {
@@ -20,7 +21,8 @@ public partial class Admin_Users : System.Web.UI.Page
         {
             lblOnlineUsers.Text = Membership.GetNumberOfUsersOnline().ToString();
             lblTotalUsers.Text = allRegisteredUsers.Count.ToString();
-            string[] alph = "A;B;C;D;E;F;G;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z;All".Split(';');
+            //string[] alph = "A;B;C;D;E;F;G;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z;All".Split(';');
+            string[] alph = "А;Б;В;Г;Д;Е;Ё;Ж;З;И;Й;К;Л;М;О;П;Р;С;Т;У;Ф;Х;Ц;Ш;Щ;Э;Ю;Я;ВСЕ".Split(';');
             rptAlphabetBar.DataSource = alph;
             rptAlphabetBar.DataBind();
         }
@@ -80,6 +82,8 @@ public partial class Admin_Users : System.Web.UI.Page
 
                 cmd.ExecuteNonQuery();
                 _connection.Close();
+
+                //FcmService.SendMessage()
             }
         }
         catch (Exception ex)
@@ -142,12 +146,18 @@ public partial class Admin_Users : System.Web.UI.Page
         if (!string.IsNullOrEmpty(gvUsers.Attributes["SearchText"]))
             searchText = gvUsers.Attributes["SearchText"];
         bool searchByEmail = false;
+        bool searchByAuto = false;
         if (!string.IsNullOrEmpty(gvUsers.Attributes["SearchByEmail"]))
+        {
             searchByEmail = bool.Parse(gvUsers.Attributes["SearchByEmail"]);
+            searchByAuto = bool.Parse(gvUsers.Attributes["SearchByAuto"]);
+        }
         if (searchText.Length > 0)
         {
             if (searchByEmail)
                 allUsers = Membership.FindUsersByEmail(searchText);
+            else if(searchByAuto)
+                allUsers = Membership.FindUsersByEmail(FindUserByAuto(searchText));
             else
                 allUsers = Membership.FindUsersByName(searchText);
         }
@@ -159,11 +169,76 @@ public partial class Admin_Users : System.Web.UI.Page
         gvUsers.DataBind();
     }
 
+    private string FindUserByAuto(string searchText)
+    {
+        string ruAlfabet = "авкорнмсхует";
+        string enAlfabet = "abkophmcxyet";
+
+        string txt = searchText.ToLower();
+        string ru_text = "";
+        string eng_text = "";
+
+        foreach (var symbol in txt)
+        {
+            eng_text += symbol;
+            foreach (var item in ruAlfabet)
+            {
+                if (eng_text.Contains(item))
+                {
+                    eng_text = eng_text.Replace(item, enAlfabet[ruAlfabet.IndexOf(item)]);
+                }
+            }
+        }
+        foreach (var symbol in txt)
+        {
+            ru_text += symbol;
+
+            foreach (var item in enAlfabet)
+            {
+                if (ru_text.Contains(item))
+                {
+                    ru_text = ru_text.Replace(item, ruAlfabet[enAlfabet.IndexOf(item)]);
+                }
+            }
+        }
+
+        string result = "";
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        try
+        {
+            using (SqlConnection _connection = new SqlConnection(connect_str))
+            {
+                _connection.Open();
+                SqlCommand cmd = new SqlCommand("Select Email From hs_Users  Where LOWER(AutoNumber) lIKE @auto OR LOWER(AutoNumber) lIKE @auto_en", _connection);
+                cmd.Parameters.AddWithValue("@auto", ru_text);
+                cmd.Parameters.AddWithValue("@auto_en", eng_text);
+
+                var email = cmd.ExecuteScalar();
+                _connection.Close();
+
+                if (email != null)
+                {
+                    result = email.ToString();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
+            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+        }
+
+        return result;
+    }
+
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        bool searchByEmail = (ddlUserSearchTypes.SelectedValue == "E-mail");
+        bool searchByEmail = (ddlUserSearchTypes.SelectedValue == "0");
+        bool searchByAuto = (ddlUserSearchTypes.SelectedValue == "2");
+
         gvUsers.Attributes.Add("SearchText", "%" + txtSearchText.Text + "%");
         gvUsers.Attributes.Add("SearchByEmail", searchByEmail.ToString());
+        gvUsers.Attributes.Add("SearchByAuto", searchByAuto.ToString());
         BindAllUsers(false);
     }
 

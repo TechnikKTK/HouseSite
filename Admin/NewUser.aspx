@@ -20,7 +20,7 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td class='my2'>Логин:</td>
+                <td class='my2'>Логин для входа:</td>
                 <td>
                     <asp:TextBox ID="UserName" runat="server" CssClass="my21" />
                 </td>

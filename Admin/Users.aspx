@@ -27,12 +27,13 @@
         </ItemTemplate>
     </asp:Repeater>
     <p></p>
-    Найти пользователя по имени или по e-mail:
+    Поиск пользователя
     <p></p>
     Будем искать по:
     <asp:DropDownList runat="server" ID="ddlUserSearchTypes" ClientIDMode="Static" ToolTip="Выберите критерий поиска">
         <asp:ListItem Text="Имя пользователя" Selected="true" Value="0" />
         <asp:ListItem Text="E-mail" Value="1" />
+        <asp:ListItem Text="Номер авто" Value="2" />
     </asp:DropDownList>
     <p></p>
     <asp:TextBox runat="server" ID="txtSearchText" ClientIDMode="Static" style="min-width:200px;"/>
@@ -91,6 +92,9 @@
             if (text == "1") {
                 $('#txtSearchText').attr("placeholder", "Например: vasya@ya.ru");
             }
+            else if(text == "2") {
+                $('#txtSearchText').attr("placeholder", "Например: T234EP99");
+            }            
             else {
                 $('#txtSearchText').attr("placeholder", "Например: Василий");
             }

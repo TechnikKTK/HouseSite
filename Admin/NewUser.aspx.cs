@@ -36,7 +36,7 @@ public partial class Admin_NewUser : System.Web.UI.Page
             randomString += Membership.GeneratePassword(length * 2, 0);
 
             //replace non alphanumeric characters
-            randomString = System.Text.RegularExpressions.Regex.Replace(randomString, @"[^a-zA-Z0-9]", m => "");
+            randomString = System.Text.RegularExpressions.Regex.Replace(randomString, @"[^а-яА-Я0-9]", m => "");
         }
         return randomString.Substring(0, length);
     }
@@ -59,7 +59,6 @@ public partial class Admin_NewUser : System.Web.UI.Page
                         _connection.Open();
                         SqlCommand cmd = new SqlCommand("INSERT INTO hs_Users (UserId, Name, Email) VALUES (@UserId, @Name, @Email)", _connection);
                         cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid) newUser.ProviderUserKey;
-                        cmd.Parameters.Add("@Name", SqlDbType.VarChar).Value = newUser.UserName;
                         cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = newUser.Email;
 
                         cmd.ExecuteNonQuery();

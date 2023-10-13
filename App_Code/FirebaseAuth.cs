@@ -14,7 +14,7 @@ using System.Windows.Forms;
 /// <summary>
 /// Сводное описание для FirebaseAuth
 /// </summary>
-public static class Fcm
+public static class FcmService
 {
     public static readonly string path = System.Web.Hosting.HostingEnvironment.MapPath("~/json/housesite-35175-firebase-adminsdk-av4l6-e66943f3b8.json");
     static string bearertoken = "";

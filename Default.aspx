@@ -111,7 +111,9 @@
             vapidKey: "BOolhDIKwbxYGInYx2V_IcA1fEyjy-o3jCbtv4pL89d7Ri9XcslDY6pu910PZNygkD6AlBNN6LX5Aroc-HObNEs"
         }).then((currentToken) => {
             if (currentToken) {
-                console.log(currentToken);
+                console.log('Token is ready');
+
+
 
                 onMessage(messaging, (payload) => {
                     console.log('Message received. ', payload);
