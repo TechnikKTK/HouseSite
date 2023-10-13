@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SendMessage.aspx.cs" MasterPageFile="~/MasterPage.master" Inherits="SendMessage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SendMessage.aspx.cs" MasterPageFile="~/Users/MasterPage.master" Inherits="SendMessage" %>
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

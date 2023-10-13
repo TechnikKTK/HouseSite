@@ -1,4 +1,5 @@
-﻿<%@ Page Async="true" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MyNotify.aspx.cs" Inherits="MyNotify" %>
+﻿<%@ Page Async="true" Language="C#" MasterPageFile="~/Users/MasterPage.master"  EnableEventValidation="false"
+    AutoEventWireup="true" CodeFile="MyNotify.aspx.cs" Inherits="MyNotify" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <title>Мои уведомления
@@ -26,6 +27,8 @@
     <asp:SqlDataSource ID="NotifySource" runat="server" ConnectionString="<%$ ConnectionStrings:migConnectionString %>" 
         SelectCommand="SELECT ROW_NUMBER() OVER (Order by CreatedAt desc) AS RowNumber, * FROM [hs_UsersNotify]"></asp:SqlDataSource>
 
+    <div class="d-flex flex-row align-items-center justify-content-between"><span>Сообщения от админитратора для Вас</span> <asp:Button ID="btnUpdate" OnClick="btnUpdate_Click" runat="server" ClientIDMode="Static" Text="Обновить" CssClass="btn btn-primary" /></div>
+
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
             <tr>
@@ -36,17 +39,21 @@
             </tr>
         </thead>
         <tbody>
-            <asp:Repeater ID="NotifyRepeater" runat="server" DataSourceID="NotifySource" >
+            <asp:Repeater ID="NotifyRepeater" runat="server">
                 <ItemTemplate>
-                    <tr  <%# GetClass(Eval("Type")) %>>
-                        <th scope="row"><%# Eval("RowNumber") %></th>
+                    <tr  <%# GetClass(Eval("Type"),Eval("IsRead")) %>>
+                        <th scope="row">
+                            <%# Eval("RowNumber") %>
+                            <asp:Button ID="btn_isRead"  OnCommand="ChangeIsRead"
+                                runat="server"  
+                                Visible='<%# getVisibility(Eval("IsRead")) %>' Text="Новое" CssClass="btn btn-outline-primary"
+                                CommandArgument='<%# Eval("ID").ToString() %>' /></th>
                         <td><%# Eval("CreatedAt", "{0:dd.MM.yyyy}") %></td>
                         <td><%# Eval("Message") %></td>
-                        <td><i class="fa-solid <%# GetIcon(Eval("Type")) %>" style="<%# GetColor(Eval("Type")) %>"></i></td>
+                        <td><i class="fa-solid <%# GetIcon(Eval("Type"),Eval("IsRead")) %>" style="<%# GetColor(Eval("Type"),Eval("IsRead")) %>"></i></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>
         </tbody>
     </table>
 </asp:Content>
-

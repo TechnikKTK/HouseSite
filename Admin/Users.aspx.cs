@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class Admin_Users : System.Web.UI.Page
 {
@@ -31,6 +32,7 @@ public partial class Admin_Users : System.Web.UI.Page
     protected void rptAlphabetBar_ItemCommand(object source, RepeaterCommandEventArgs e)
     {
         gvUsers.Attributes.Add("SearchByEmail", false.ToString());
+        gvUsers.Attributes.Add("SearchByAuto", false.ToString());
         if (e.CommandArgument.ToString().Length == 1)
         {
             gvUsers.Attributes.Add("SearchText", e.CommandArgument.ToString() + "%");
@@ -83,7 +85,7 @@ public partial class Admin_Users : System.Web.UI.Page
                 cmd.ExecuteNonQuery();
                 _connection.Close();
 
-                //FcmService.SendMessage()
+                Task.Run(()=> { HouseSiteService.SetLockBarrier(user, !barrier, connect_str); });
             }
         }
         catch (Exception ex)
@@ -99,8 +101,16 @@ public partial class Admin_Users : System.Web.UI.Page
 
     protected string GetLockPost(string uid)
     {
-        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
         string barrier = "lock";
+        if (GetLockValue(uid) == 1) barrier = "barrier";                
+
+        return "/images/" + barrier + ".png";
+    }
+
+    protected int GetLockValue(string uid)
+    {
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        bool barrier = false;
         try
         {
             userID = Guid.Parse(uid);
@@ -119,7 +129,7 @@ public partial class Admin_Users : System.Web.UI.Page
                 {
                     if (reader["BrokeRules"] != Convert.DBNull)
                     {
-                        if ((bool)reader["BrokeRules"]) barrier = "barrier";
+                        barrier = (bool)reader["BrokeRules"];
                     }
                 }
 
@@ -132,7 +142,7 @@ public partial class Admin_Users : System.Web.UI.Page
             File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "Page_Load \n" + ex + "\n");
         }
 
-        return "~/images/" + barrier + ".png";
+        return barrier ? 1 : 0;
     }
 
 
@@ -270,4 +280,9 @@ public partial class Admin_Users : System.Web.UI.Page
         return SearchText == "E-mail" ? "Например: vasya@ya.ru" : "Например: Василий";
     }
 
+
+    protected void changeBarrier_Click(object sender, EventArgs e)
+    {
+
+    }
 }

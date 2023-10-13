@@ -25,45 +25,6 @@ html,body {
     display: block;
 }
 
-/* Typography
-------------------------------------- */
-h1,h2,h3,h4,h5 {
-  font-weight: bold;
-}
-
-h1 {
-  font-size: 62px;
-  line-height: 72px;
-}
-
-h2 {
-  color: #323232;
-  font-size: 26px;
-  line-height: 42px;
-  letter-spacing: 1px;
-  padding-bottom: 12px;
-}
-
-h3 {
-  color: #ffa400;
-  font-size: 16px;
-  letter-spacing: 26px;
-  letter-spacing: 2px;
-}
-
-h5 {
-  color: #ffa400;
-  line-height: 28px;
-  letter-spacing: 2px;
-}
-
-p {
-  font-size: 16px;
-  letter-spacing: 0.9px;
-  line-height: 32px;
-}
-
-
 
 /* All Section styles
 ------------------------------------- */

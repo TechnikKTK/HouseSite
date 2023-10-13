@@ -10,8 +10,7 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/animate.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <link rel="stylesheet" href="/css/animate.css" />
     <link rel="stylesheet" href="/css/fontawesome.min.css" />
     <link rel="stylesheet" href="/css/owl.theme.css" />
     <link rel="stylesheet" href="/css/owl.carousel.css" />
@@ -19,7 +18,6 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
     <link href="/css/app.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <script src="/js/jquery.min.js"></script>
 
     <asp:ContentPlaceHolder id="head" runat="server">
     </asp:ContentPlaceHolder>
@@ -56,12 +54,62 @@
 
     <!-- Scripts -->
     <!-- Bootstrap core JavaScript -->
-    <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <script src="/js/owl-carousel.js"></script>
+    
 
-    <script src="/js/tabs.js"></script>
-    <script src="/js/popup.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            text = $('#ddlUserSearchTypes').val();
+            if (text == "1") {
+                $('#txtSearchText').attr("placeholder", "Например: vasya@ya.ru");
+            }
+            else {
+                $('#txtSearchText').attr("placeholder", "Например: Василий");
+            }
+
+            $("#gvUsers").attr("class", "table table-bordered table-striped");
+
+            
+        });
+
+        function changeBarrier(barrier, sender)
+        {
+            var body_modal = $('#exampleModal').find('.modal-body');
+
+            if(barrier == 1)
+            {
+                $(body_modal).html('Вы действительно хотите РАЗБЛОКИРОВАТЬ шлагбаум этому пользователю?');
+            }
+            else
+            {
+                $(body_modal).html('Вы действительно хотите ЗАБЛОКИРОВАТЬ шлагбаум этому пользователю?');
+            }
+
+            $('#btn_ok').click(function () {
+                var btn = $(sender).parent().parent().find('.btnChange');
+                $(btn).click();
+            });
+
+        }
+
+        $('#ddlUserSearchTypes').change(function () {
+            let text = this.value;
+            if (text == "1") {
+                $('#txtSearchText').attr("placeholder", "Например: vasya@ya.ru");
+            }
+            else if(text == "2") {
+                $('#txtSearchText').attr("placeholder", "Например: T234EP99");
+            }            
+            else {
+                $('#txtSearchText').attr("placeholder", "Например: Василий");
+            }
+        });
+    </script>
+
 </body>
 </html>

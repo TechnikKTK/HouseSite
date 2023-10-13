@@ -91,27 +91,29 @@
                 console.log('Token is ready');
 
                 $.post('/save-token', { token: currentToken }, function (data) {
-                    alert(data);
+                    console.log(data);
                 });
 
                 onMessage(messaging, (payload) => {
                     console.log('Message received. ', payload);
+                    
+                    if ("setAppBadge" in navigator) {
+                        navigator.setAppBadge(1);
+                    }
 
                     var notification = {
-                        body: "It's found today at 9:39",
-                        click_action: "https://www.nasa.gov/feature/goddard/2016/hubble-sees-a-star-inflating-a-giant-bubble",
-                        icon: "https://peter-gribanov.github.io/serviceworker/Bubble-Nebula.jpg",
-                        image: "https://peter-gribanov.github.io/serviceworker/Bubble-Nebula_big.jpg",
-                        title: "Bubble Nebula"
+                        body: payload.notification.body,
+                        click_action: '/notify',
+                        icon:  payload.notification.icon,
+                        image:  payload.notification.image,
+                        title:  payload.notification.title
                     };
 
                     registration.showNotification(
                         payload.notification.title,
                         notification);
 
-                    if ("setAppBadge" in navigator) {
-                        navigator.setAppBadge(1);
-                    }
+                   
                 });
             }
         }).catch((err) => {

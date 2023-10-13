@@ -11,6 +11,5 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!this.Page.User.Identity.IsAuthenticated)
             Response.Redirect("/home");
-
     }
 }

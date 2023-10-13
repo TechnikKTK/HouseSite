@@ -72,8 +72,7 @@ public static class FcmService
                     Title = title,
                     Body = body,
                     Icon = "https://prodm8.bsite.net/favicon.ico",
-                    Image = image,
-                    
+                    Image = image,                    
                 },  
             },
             Android = new AndroidConfig
