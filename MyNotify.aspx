@@ -25,69 +25,47 @@
                 
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <%--<asp:Button ID="send_fcm" runat="server" OnClick="send_fcm_Click" style="position:absolute; top: 50%; left:50%;" />--%>
-    <div style="margin: 100px 0 0 0; background-color: lightgray; padding: 10px; border-radius: 12px; overflow: hidden">
-        <table class="table table-dark" style="border-radius: 12px; overflow: hidden">
+    <asp:SqlDataSource ID="NotifySource" runat="server" ConnectionString="<%$ ConnectionStrings:migConnectionString %>"
+        SelectCommand="SELECT ROW_NUMBER() OVER (Order by CreatedAt desc) AS RowNumber, * FROM [hs_UsersNotify]"></asp:SqlDataSource>
+
+
+    <div class="card" style="margin: 75px auto">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Сообщения от админимтратора для Вас</span>
+            <asp:Button ID="btnUpdate" OnClick="btnUpdate_Click" runat="server" ClientIDMode="Static" Text="Обновить" CssClass="btn btn-primary" />
+        </div>
+        <ul class="list-group-flush">
+            <li class="list-group-item">
+        <table class="table table-striped table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Сообщение</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
+                <asp:Repeater ID="NotifyRepeater" runat="server">
+                    <ItemTemplate>
+                        <tr <%# GetClass(Eval("Type"), Eval("IsRead")) %>>
+                            <th scope="row">
+                                <%# Eval("RowNumber") %>
+                                <%--<asp:Button ID="btn_isRead" OnCommand="ChangeIsRead"
+                                    runat="server"
+                                    Visible="<%# getVisibility(Eval("IsRead")) %>" Text="Новое" CssClass="btn btn-outline-primary"
+                                    CommandArgument="<%# Eval("ID").ToString() %>" />--%></th>
+                            <td><%# Eval("CreatedAt", "{0:dd.MM.yyyy}") %></td>
+                            <td><%# Eval("Message") %></td>
+                            <td><i class="fa-solid <%# GetIcon(Eval("Type"), Eval("IsRead")) %>" style="<%# GetColor(Eval("Type"), Eval("IsRead")) %>"></i></td>
+                        </tr>
+                    </ItemTemplate>
+                </asp:Repeater>
             </tbody>
         </table>
 
-        <table class="table table-dark" style="margin: 0; border-radius: 12px; overflow: hidden">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
-            </tbody>
-        </table>
+            </li>
+        </ul>
     </div>
 </asp:Content>
 
