@@ -31,7 +31,7 @@
 
     <div class="card" style="margin: 75px auto">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Сообщения от админимтратора для Вас</span>
+            <span>Сообщения от администратора для Вас</span>
             <asp:Button ID="btnUpdate" OnClick="btnUpdate_Click" runat="server" ClientIDMode="Static" Text="Обновить" CssClass="btn btn-primary" />
         </div>
         <ul class="list-group-flush">
@@ -51,10 +51,10 @@
                         <tr <%# GetClass(Eval("Type"), Eval("IsRead")) %>>
                             <th scope="row">
                                 <%# Eval("RowNumber") %>
-                                <%--<asp:Button ID="btn_isRead" OnCommand="ChangeIsRead"
+                                <asp:Button ID="btn_isRead" OnCommand="ChangeIsRead"
                                     runat="server"
-                                    Visible="<%# getVisibility(Eval("IsRead")) %>" Text="Новое" CssClass="btn btn-outline-primary"
-                                    CommandArgument="<%# Eval("ID").ToString() %>" />--%></th>
+                                    Visible='<%# getVisibility(Eval("IsRead")) %>' Text="Новое" CssClass="btn btn-outline-primary"
+                                    CommandArgument='<%# Eval("ID").ToString() %>' /></th>
                             <td><%# Eval("CreatedAt", "{0:dd.MM.yyyy}") %></td>
                             <td><%# Eval("Message") %></td>
                             <td><i class="fa-solid <%# GetIcon(Eval("Type"), Eval("IsRead")) %>" style="<%# GetColor(Eval("Type"), Eval("IsRead")) %>"></i></td>
