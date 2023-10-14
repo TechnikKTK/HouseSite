@@ -107,7 +107,7 @@ public static class Fcm
             }
         };
 
-        var result = await messaging.SendAsync(message).ConfigureAwait(false);
+        //var result = await messaging.SendAsync(message).ConfigureAwait(false);
     }
 
     public static void SendMessage(string token, string title, string body, string image="")
