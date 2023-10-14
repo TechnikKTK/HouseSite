@@ -34,18 +34,18 @@ public partial class MyNotify : System.Web.UI.Page
                 {
                     using (SqlConnection _connection = new SqlConnection(connect_str))
                     {
-                        _connection.Open();
-                        SqlCommand cmd = new SqlCommand("SELECT ROW_NUMBER() OVER (Order by CreatedAt desc) AS RowNumber, * FROM [hs_UsersNotify] Where UserID = @UserId", _connection);
-                        cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
-                        
+                        SqlCommand cmd = new SqlCommand("SELECT ROW_NUMBER() OVER (Order by CreatedAt desc) AS RowNumber, * " +
+                            "FROM [hs_UsersNotify] Where UserID = @UserId", _connection);
+
+                        cmd.Parameters.AddWithValue("@UserId", (Guid)user.ProviderUserKey);
+
+
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
                         DataTable notify = new DataTable();
                         da.Fill(notify);
 
                         NotifyRepeater.DataSource= notify;
                         NotifyRepeater.DataBind();
-
-                        //_connection.Close();
                     }
                 }
                 catch (Exception ex)
@@ -55,9 +55,10 @@ public partial class MyNotify : System.Web.UI.Page
                 }
             }
         }
-        catch
+        catch(Exception ex)
         {
-
+            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
+            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
         }
     }
 
@@ -118,6 +119,19 @@ public partial class MyNotify : System.Web.UI.Page
         }
     }
 
+    protected string GetImage(object data)
+    {
+        bool isRead = (bool)data;
+
+        if (isRead)
+        {
+            return "/images/envelope-open-text-solid.svg";
+        }
+        else
+        {
+            return "/images/envelope-solid.svg";
+        }
+    }
     protected string GetColor(object message_type, object data)
     {
         bool isRead = (bool)data;
@@ -200,36 +214,4 @@ public partial class MyNotify : System.Web.UI.Page
         return !isRead;
     }
 
-    //protected void rptr_ItemDataBound(object sender, RepeaterItemEventArgs e)
-    //{
-    //    if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
-    //    {
-    //        // Stuff to databind
-    //        Button myButton = (Button)e.Item.FindControl("btn_isRead");
-
-    //        myButton.CommandName = "ChangeIsRead";
-    //        myButton.CommandArgument = (((System.Data.DataRowView)e.Item.DataItem).Row.ItemArray[6]).ToString();
-
-    //        try
-    //        {
-    //            this.Page.ClientScript.RegisterForEventValidation(new PostBackOptions(myButton));
-    //        }
-    //        catch { }
-    //    }
-    //}
-
-    //protected void rptr_ItemCommand(object source, RepeaterCommandEventArgs e)
-    //{
-    //    if (e.CommandName == "ChangeIsRead")
-    //    {
-    //        UpdateRow(e.CommandArgument);
-    //        GetMyNotify();
-    //    }
-    //}
-
-    //protected void Page_Init(object sender, EventArgs e)
-    //{
-    //    // rptr is your repeater's name
-    //    NotifyRepeater.ItemCommand += new RepeaterCommandEventHandler(rptr_ItemCommand);
-    //}
 }

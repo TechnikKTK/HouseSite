@@ -7,7 +7,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentNav" runat="Server">
 
     <li class="nav-item">
-        <a class="nav-link" href="/home">Дашборд</a>
+        <a class="nav-link" href="/home">Главная</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/notify">Уведомления</a>
@@ -24,7 +24,7 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
 
-    <div class="card" style="width: 18rem;margin: 75px auto;">
+    <div class="card" style="max-width: 23rem;margin: 75px auto;">
         <div class="card-header">
             Получение номера владельца автомобиля
         </div>

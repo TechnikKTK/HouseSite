@@ -10,6 +10,30 @@
     height: 100vh;
 }
 
+.bg_body {
+    background-color: #ffffff96;
+    position: absolute;
+    width: 100vw;
+    min-height: 100vh;
+    max-height: 200vh;;
+    z-index: -1;
+    top: 0;
+}
+
+.bd-main {
+    margin-top: 60px;
+}
+
+.body-header {
+    background: #dabaffde;
+    padding: 10px;
+    align-items: center !important;
+    flex-direction: row !important;
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+
 .form-group {
     margin: 15px 5px;
 }

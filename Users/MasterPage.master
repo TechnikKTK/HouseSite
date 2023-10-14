@@ -50,10 +50,13 @@
                 </div>
             </div>
         </nav>
+        <div class="bg_body"></div>
         <div id="myalert"></div>
-        <div class="container">
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-            </asp:ContentPlaceHolder>
+        <div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+            <main class="bd-main order-1">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </main>
         </div>
     </form>
 
@@ -208,7 +211,14 @@
             });
         }
 
+        $('#menu_mobile').click(function ()
+        {
+            var menu = $(document).find('.navbar-toggler').first();
+            menu.click();
+        });
+
         CheckPermission();
+
 
     </script>
 </body>
