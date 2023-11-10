@@ -10,18 +10,40 @@
     height: 100vh;
 }
 
+.hidden {
+    display: none;
+}
+
+.trAdv {
+    display: none;
+}
+
 .bg_body {
     background-color: #ffffff96;
     position: absolute;
     width: 100vw;
     min-height: 100vh;
-    max-height: 200vh;;
+    max-height: 200vh;
     z-index: -1;
     top: 0;
 }
 
 .bd-main {
     margin-top: 60px;
+}
+
+.accordion-button {
+    background-color: #eee;
+}
+
+#myalert_admin {
+    position: absolute;
+    top: 60px;
+    width: 100vw;
+}
+
+.form-control {
+    max-width: 350px;
 }
 
 .body-header {
@@ -56,14 +78,31 @@ form {
     right: 5px;
 }
 
+.alert-barrier {
+    --bs-alert-color: #edf1e7;
+    --bs-alert-bg: #a10808;
+    --bs-alert-border-color: #161616;
+    --bs-alert-link-color: var(--bs-warning-text-emphasis);
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+    margin: 10px;
+}
+
 .my-banner{
     display:none;
 }
 
-div:has(> #gvUsers) { 
-    overflow-x:auto;
+#gvUserContent {
+    overflow-x: auto;
 }
+
 div:has(> #gvMessages) {
+    overflow-x: auto;
+}
+
+div:has(> #tblMessages) {
     overflow-x: auto;
 }
 
@@ -71,6 +110,11 @@ div:has(> #gvMessages) {
     color: #fff;
     background-color: #212529;
     border-color: #32383e;
+}
+
+.table-bold > *
+{
+    font-weight:bold;
 }
 
 .container {
@@ -86,11 +130,111 @@ div:has(> #gvMessages) {
     border-color: #dee2e6;
 }
 
+.modal-header .close {
+    padding: 1rem;
+    margin: -1rem -1rem -1rem auto;
+}
+
+.close:focus, .close:hover {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+.modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.modal-header-info .close {
+    color: #fff;
+    font-size: 18pt;
+}
+
+.modal-header-info {
+    background: #2f2f7c;
+    color: #ffffff;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mt-14 {
+    margin-top: 14px;
+}
+
+lk-doc-card-row.header-inner {
+    width: 100%;
+    display: flex;
+    margin: 5px 0;
+    border-bottom: 1px solid #d6d6d6;
+    padding: 10px 10px;
+    border-top: 1px solid #d6d6d6;
+    background-color: #cfdee961;
+}
+
+lk-doc-card-row .accordion-header {
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.accordion-body {
+    padding: 0;
+    padding-bottom: 9px;
+}
+
+.text-plain.ng-star-inserted {
+    padding-left: 20px;
+}
+
+
+.modal-header-warning .close {
+    color: #fff;
+    font-size: 18pt;
+}
+
+.modal-header-warning {
+    background: #ca2828;
+    color: #ffffff;
+}
+
+button.close {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #122746;
+    background-color: var(--bs-accordion-active-bg);
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+    font-weight: bold;
+}
+
+#rulesCheckBox > tbody > tr > td > label {
+    display: contents;
+}
+
+.my_alert {
+    width: calc(100% - 10px);
+}
 
 @media (max-width: 990px) {
-    .form 
-    {
-        margin: 100% auto;
+    .form {
+        margin: 50% auto;
     }
 
     .btn-exit {
@@ -103,5 +247,15 @@ div:has(> #gvMessages) {
 
     .my-banner {
         display: inherit;
+    }
+
+    .my_alert {
+        margin-top: 0px !important;
+    }
+
+    #myalert_admin {
+        position: absolute;
+        top: 3px;
+        width: 100vw;
     }
 }

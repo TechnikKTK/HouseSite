@@ -20,17 +20,44 @@
         <small id="loginHelp" class="form-text text-muted">Логин необходим для авторизации</small>
     </div>
     <div class="form-group">
-        <label for="tbxFIO">Ф.И.О. (полностью)</label>
-        <asp:TextBox ID="tbxFIO" ClientIDMode="Static" runat="server" 
-            aria-describedby="fioHelp" placeholder="Введите ф.и.о."
+        <label for="tbxLastName">Фамилия</label>
+        <asp:TextBox ID="tbxLastName" ClientIDMode="Static" runat="server" 
+            aria-describedby="lastnameHelp" placeholder="Введите фамилию"
             CssClass="form-control" /> 
-        <small id="fioHelp" class="form-text text-muted">Ф.И.О. будет добавлено пользователю</small>
+        <small id="lastnameHelp" class="form-text text-muted">будет добавлено пользователю</small>
+    </div>    
+    <div class="form-group">
+        <label for="tbxName">Имя</label>
+        <asp:TextBox ID="tbxName" ClientIDMode="Static" runat="server" 
+            aria-describedby="nameHelp" placeholder="Введите имя"
+            CssClass="form-control" /> 
+        <small id="nameHelp" class="form-text text-muted">будет добавлено пользователю</small>
+    </div>    <div class="form-group">
+        <label for="tbxPatronumic">Отчество</label>
+        <asp:TextBox ID="tbxPatronumic" ClientIDMode="Static" runat="server" 
+            aria-describedby="patronHelp" placeholder="Введите отчество"
+            CssClass="form-control" /> 
+        <small id="patronHelp" class="form-text text-muted">будет добавлено пользователю</small>
     </div>
     <div class="form-group">
-        <label for="tbxEmail">Email</label>
+        <label for="tbxAuto">Номер автомобиля (если есть)</label>
+        <asp:TextBox runat="server" ID="tbxAuto" ClientIDMode="Static"  
+            aria-describedby="phoneHelp" placeholder="Введите рег. знак авто"
+            CssClass="form-control auto_num" />
+        <small id="phoneHelp" class="form-text text-muted">номер рег.знака вводить криллицей</small>
+    </div>
+    <div class="form-group">
+        <label for="tbxPhone">Номер телефона (если есть)</label>
+        <asp:TextBox runat="server" ID="tbxPhone" ClientIDMode="Static"  
+            aria-describedby="autoHelp" placeholder="Введите номер телефона"
+            CssClass="form-control phone_num" />
+        <small id="autoHelp" class="form-text text-muted">будет добавлено пользователю</small>
+    </div>
+    <div class="form-group">
+        <label for="tbxEmail">Email (если есть)</label>
         <asp:TextBox runat="server" ID="tbxEmail" ClientIDMode="Static"  
             aria-describedby="emailHelp" placeholder="Введите email"
-            CssClass="form-control" />
+            CssClass="form-control email_text" />
         <small id="emailHelp" class="form-text text-muted">email должен соответствовать правилу: имя@домен.зона</small>
     </div>
     <div class="form-group">
@@ -42,5 +69,4 @@
     </div>
     <asp:Button ID="btnCreateUser" runat="server" CssClass="btn btn-primary"
         Text="Сохранить" OnClick="btnCreateUser_Click" />
-    
 </asp:Content>

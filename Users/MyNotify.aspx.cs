@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.IO;
-using System.Windows.Markup;
-using System.Data.Common;
-using System.Threading;
 
 public partial class MyNotify : System.Web.UI.Page
 {
@@ -22,23 +13,23 @@ public partial class MyNotify : System.Web.UI.Page
     }
 
     private void GetMyNotify()
-    {
+    {              
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        MembershipUser user = Membership.GetUser();
+
         try
         {
-            MembershipUser user = Membership.GetUser();
+            user = Membership.GetUser();
 
             if (user != null)
             {
-                string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
                 try
                 {
                     using (SqlConnection _connection = new SqlConnection(connect_str))
                     {
-                        SqlCommand cmd = new SqlCommand("SELECT ROW_NUMBER() OVER (Order by CreatedAt desc) AS RowNumber, * " +
-                            "FROM [hs_UsersNotify] Where UserID = @UserId", _connection);
+                        SqlCommand cmd = new SqlCommand("SELECT * FROM [hs_UsersNotify] Where [UserId] = @UserId Order by [CreatedAt] desc", _connection);
 
                         cmd.Parameters.AddWithValue("@UserId", (Guid)user.ProviderUserKey);
-
 
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
                         DataTable notify = new DataTable();
@@ -50,20 +41,45 @@ public partial class MyNotify : System.Web.UI.Page
                 }
                 catch (Exception ex)
                 {
-                    string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-                    File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+                    HouseSiteService.SaveLogError((Guid)user.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                    {
+                        var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                        ClientScript.RegisterStartupScript(
+                          this.GetType(),
+                          Guid.NewGuid().ToString(), href);
+                    });
                 }
             }
         }
         catch(Exception ex)
         {
-            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+            HouseSiteService.SaveLogError((Guid)user.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            });
         }
     }
 
     protected void send_fcm_Click(object sender, EventArgs e)
     {       
+    }
+
+    protected string GetLink(object ansID)
+    {
+        if (ansID != Convert.DBNull)
+        {
+            return string.Format("<span data-toggle='modal' data-target='#modalQuest' " +
+                "style='cursor:pointer;text-decoration: underline; font-weight: bold;'" +
+                " onclick='getMessage({0})'> " +
+                " на ваше обращение № {0}</span>", ansID);
+        }
+        else
+        {
+            return "";
+        }
     }
 
     protected string GetIcon(object message_type, object data)
@@ -73,7 +89,6 @@ public partial class MyNotify : System.Web.UI.Page
 
         if (!isRead)
         {
-
             switch (type)
             {
                 case 0:
@@ -171,14 +186,14 @@ public partial class MyNotify : System.Web.UI.Page
     }
 
     private void UpdateRow(object row)
-    {
+    {            
+        MembershipUser user = Membership.GetUser();
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+
         try
         {
-            MembershipUser user = Membership.GetUser();
-
             if (user != null)
             {
-                string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
                 try
                 {
                     using (SqlConnection _connection = new SqlConnection(connect_str))
@@ -194,15 +209,25 @@ public partial class MyNotify : System.Web.UI.Page
                 }
                 catch (Exception ex)
                 {
-                    string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-                    File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+                    HouseSiteService.SaveLogError((Guid)user.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                    {
+                        var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                        ClientScript.RegisterStartupScript(
+                          this.GetType(),
+                          Guid.NewGuid().ToString(), href);
+                    });
                 }
             }
         }
         catch (Exception ex)
         {
-            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+            HouseSiteService.SaveLogError((Guid)user.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            });
         }
     }
 

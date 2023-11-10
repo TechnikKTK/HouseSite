@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#"  AutoEventWireup="true" CodeFile="AdminMasterPage.master.cs" Inherits="Admin_AdminMasterPage" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="AdminMasterPage.master.cs" Inherits="Admin_AdminMasterPage" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,7 +10,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <link rel="stylesheet" href="/css/animate.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/animate.css" />
     <link rel="stylesheet" href="/css/fontawesome.min.css" />
     <link rel="stylesheet" href="/css/owl.theme.css" />
     <link rel="stylesheet" href="/css/owl.carousel.css" />
@@ -19,12 +20,76 @@
     <link href="/css/app.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
 
-    <asp:ContentPlaceHolder id="head" runat="server">
+    <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="primary-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+        </symbol>
+        <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+        </symbol>
+        <symbol id="warning-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        </symbol>
+    </svg>
+    <div id="myalert_admin"></div>
+    <!-- Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Системное сообщение</h5>
+                    <button type="button" id="modal_close" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button id="btn_alertOk" type="button" class="btn btn-primary" style="min-width: 75px;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="alertButton" data-toggle="modal" data-target="#alertModal" class="fade"></button>
+    <script>
+        function Myalert(message, type, time, url) {
+            let alertContainer = $("#myalert_admin");
+
+            let wrapper = document.createElement('div')
+            wrapper.innerHTML =
+                `<div class="alert alert-${type} d-flex align-items-center" role="alert" id="alert" style="margin-top: 3px;display:none;justify-content: space-between; width:99%; margin-left:3px">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:">
+                    <use xlink:href="#${type}-fill" />
+                </svg>
+                <div class="flex-column" style="justify-content: space-between;">
+                    <span id="alert_text">${message}</span>
+                </div>
+                <button type="button" id="btn_alert_close" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+            alertContainer.append(wrapper);
+
+            if (type == "warning") {
+                setTimeout(function () {
+                    $("#myalert_admin").html('');
+                }, time * 15000);
+            }
+            else {
+                setTimeout(function () {
+                    $("#myalert_admin").html('');
+                    if (url != '') {
+                        location.href = url;
+                    }
+                }, time * 3000);
+            }
+        }
+    </script>
     <form id="form1" runat="server">
-       <nav class="navbar navbar-expand-lg bg-light fixed-top">
+        <nav class="navbar navbar-expand-lg bg-light fixed-top">
             <div class="container-fluid">
                 <i class="fa-solid fa-building-user"></i><span class="my-banner">Панель администратора</span>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -41,52 +106,121 @@
                 </div>
             </div>
         </nav>
-<%--         <asp:ScriptManager ID="ScriptManager" runat="server">
-                <Services>
-                    <asp:ServiceReference Path="AjaxService.asmx" />
-                </Services>
-         </asp:ScriptManager>--%>
-        <div class="container-fluid p-4" style="background-color:#ffffffe6;margin-top: 40px;">
-            <asp:ContentPlaceHolder id="MainContent" runat="server">        
+        <div class="container-fluid p-4" style="background-color: #ffffffe6; margin-top: 40px;">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
         </div>
     </form>
 
     <!-- Scripts -->
     <!-- Bootstrap core JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    
-
-
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            text = $('#ddlUserSearchTypes').val();
-            if (text == "1") {
-                $('#txtSearchText').attr("placeholder", "Например: vasya@ya.ru");
+            $(".auto_num").each(function (i, obj) {
+                $(obj).attr("placeholder", "Пример: A 123 AA 999");
+            });
+
+            $(".phone_num").each(function (i, obj) {
+                $(obj).attr("placeholder", "Пример: +79044562578");
+            });
+
+            $(".email_text").each(function (i, obj) {
+                $(obj).attr("placeholder", "Пример: mail@domain.zone");
+            });
+
+            let text = $('#ddlUserSearchTypes').val();
+            if (text == "0") {
+                $('#txtSearch').attr("placeholder", "Например: Василий Петров");
+            }
+            else if (text == "1") {
+                $('#txtSearch').attr("placeholder", "Например: T234EP99");
             }
             else {
-                $('#txtSearchText').attr("placeholder", "Например: Василий");
+                $('#txtSearch').attr("placeholder", "Например: 400");
             }
 
-            $("#gvUsers").attr("class", "table table-bordered table-striped");
+            $('#dop_auto').change(function () {
+                let check = this.checked;
+                $(".trAdv").each(function (i, obj) {
+                    $(obj).toggle(check);
+                });
+            });
 
-            
+            let num = $('#tbxAutoNumberAdv').val();
+
+            if (num) {
+                if (num.length > 0) {
+                    $('#dop_auto').prop('checked', true);
+                    $(".trAdv").each(function (i, obj) {
+                        $(obj).toggle(true);
+                    });
+                }
+            }
+
+            showMessages(false);
+
+            $('#btnNewMessages').click(function () {
+                showMessages(false);
+            });
+
+            $('#btnReadMessages').click(function () {
+                showMessages(true);
+            });
+
         });
 
-        function changeBarrier(barrier, sender)
-        {
-            var body_modal = $('#exampleModal').find('.modal-body');
+        function showMessages(isRead) {
+            if (!isRead) {
+                $('.table-read').hide();
+                $('.table-bold').show();
+            } else {
+                $('.table-read').show();
+                $('.table-bold').hide();
+            }
+        }
 
-            if(barrier == 1)
-            {
+        function deleteMess(sender) {
+            $('#btnDelMess_ok').click(function () {
+                var btn = $(sender).parent().parent().find('.btnDeleteMessage');
+                $(btn).click();
+            });
+        }
+
+        function answerMess(messageBody,messageID, userKey, sender) {
+            var txtAns = $('#modalAnswer').find('#txtAnswer');
+            var title = $('#modalAnswer').find('.modal-prebody');
+
+
+            $(title).html('Текст сообщения: ' + messageBody);
+
+            $('#btnSendAns').click(function () {
+                $.post("/admin/answer",
+                    {
+                        userKey: userKey,
+                        messageID: messageID,
+                        answer: $(txtAns).val()
+                    })
+                    .done(function (result, status, xhr) {
+                        if (result == 'success')
+                            location.href = '/admin/messages'
+                        else
+                            alert(result);
+                    })
+            });
+        }
+
+        function changeBarrier(barrier, sender) {
+            var body_modal = $('#modalBarrier').find('.modal-body');
+
+            if (barrier == 1) {
                 $(body_modal).html('Вы действительно хотите РАЗБЛОКИРОВАТЬ шлагбаум этому пользователю?');
             }
-            else
-            {
+            else {
                 $(body_modal).html('Вы действительно хотите ЗАБЛОКИРОВАТЬ шлагбаум этому пользователю?');
             }
 
@@ -94,22 +228,90 @@
                 var btn = $(sender).parent().parent().find('.btnChange');
                 $(btn).click();
             });
+        }
 
+        function changeBan(granted, sender) {
+            var body_modal = $('#modalBan').find('.modal-body');
+
+            if (granted == 0) {
+                $(body_modal).html('Вы действительно хотите РАЗРЕШИТЬ вход в систему для этого пользователя?');
+            }
+            else {
+                $(body_modal).html('Вы действительно хотите ЗАПРЕТИТЬ вход в систему для этого пользователя?');
+            }
+
+            $('#btnBan_ok').click(function () {
+                var btn = $(sender).parent().parent().find('.btnChangeBan');
+                $(btn).click();
+            });
+        }
+
+        function alertMsg(message, type, href) {
+            var body_modal = $('#alertModal').find('.modal-body');
+            var header = $('#alertModal').find('.modal-header');
+
+            $(header).addClass("modal-header-" + type);
+
+            if (type == "warning") {
+                $(body_modal).html(`<i class="fa-solid fa-triangle-exclamation" style="color: #d50707;"></i> ${message}`);
+                setTimeout(function () {
+                    $("#modal_close").click();
+                }, 15000);
+            }
+            else {
+                $(body_modal).html(`<i class="fa-solid fa-circle-info"></i> ${message}`);
+            }
+
+            $('#btn_alertOk').click(function () {
+                if (href != '') {
+                    location.href = href;
+                }
+                else {
+                    $("#modal_close").click();
+                }
+            });
+
+            $("#alertButton").click();
+        }
+
+        function delUser(sender) {
+            $('#btnDel_ok').click(function () {
+                var btn = $(sender).parent().parent().find('.btnDel');
+                $(btn).click();
+            });
         }
 
         $('#ddlUserSearchTypes').change(function () {
             let text = this.value;
-            if (text == "1") {
-                $('#txtSearchText').attr("placeholder", "Например: vasya@ya.ru");
+            if (text == "0") {
+                $('#txtSearch').attr("placeholder", "Например: Василий Петров");
             }
-            else if(text == "2") {
-                $('#txtSearchText').attr("placeholder", "Например: T234EP99");
-            }            
+            else if (text == "1") {
+                $('#txtSearch').attr("placeholder", "Например: T234EP99");
+            }
             else {
-                $('#txtSearchText').attr("placeholder", "Например: Василий");
+                $('#txtSearch').attr("placeholder", "Например: 400");
+            }
+        });
+
+
+        $('#tbxAutoNumberAdv').on('input change paste', function () {
+            var text = $(this).val();
+            if (text.length > 0)
+                if (text.match(/[a-zA-Z]+/)) {
+                    alertMsg('Поле должно содержать русские буквы и цифры', "warning", '');
+                    $(this).val('');
+            }
+        });
+
+        $('#tbxAutoNumber').on('input change paste', function () {
+            var text = $(this).val();
+            if (text.length > 0)
+                if (text.match(/[a-zA-Z]+/)) {
+                    alertMsg('Поле должно содержать русские буквы и цифры', "warning", '');
+                    $(this).val('');
             }
         });
     </script>
-
 </body>
 </html>

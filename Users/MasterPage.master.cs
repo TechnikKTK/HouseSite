@@ -9,7 +9,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!this.Page.User.Identity.IsAuthenticated)
-            Response.Redirect("/home");
+        //if (!this.Page.User.Identity.IsAuthenticated)
+        //    Response.Redirect("/home");
     }
 }

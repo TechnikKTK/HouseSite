@@ -14,7 +14,9 @@ public partial class Exit : System.Web.UI.Page
         Session.Abandon();
         FormsAuthentication.SignOut();
         
-        Response.Redirect("/home");
+        var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+        ClientScript.RegisterStartupScript(
+          this.GetType(),
+          Guid.NewGuid().ToString(), href);
     }
-
 }

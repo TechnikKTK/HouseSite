@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="GetMessage.aspx.cs" Inherits="Users_GetMessage" %>

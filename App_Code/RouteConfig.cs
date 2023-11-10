@@ -17,11 +17,16 @@ public class RouteConfig
         routes.MapPageRoute("phone-by-auto", "phone-by-auto", "~/Users/GetPhoneByAuto.aspx");
         routes.MapPageRoute("fcm", "save-token", "~/GetDeviceToken.aspx");
         routes.MapPageRoute("sndMess", "send-message", "~/Users/SendMessage.aspx");
+        routes.MapPageRoute("myMess", "messages", "~/Users/MyMessages.aspx");
         routes.MapPageRoute("OkMess", "message-ok", "~/Users/SendOk.aspx");
         routes.MapPageRoute("check_fcm", "fcm", "~/CheckFcm.aspx");
         routes.MapPageRoute("users", "admin/users", "~/Admin/Users.aspx");
         routes.MapPageRoute("addusers", "admin/users/add", "~/Admin/NewUser.aspx");
         routes.MapPageRoute("editusers", "admin/users/edit", "~/Admin/EditUsers.aspx");
         routes.MapPageRoute("messages", "admin/messages", "~/Admin/Messages.aspx");
+        routes.MapPageRoute("answer", "admin/answer", "~/Admin/AnswerToMessage.aspx");
+        routes.MapPageRoute("getMessage", "get/message", "~/Users/GetMessage.aspx");
+        routes.MapPageRoute("getRules", "get/rules", "~/CheckRules.aspx");
+        routes.MapPageRoute("setRules", "post/rules", "~/AccepRules.aspx");
     }
 }

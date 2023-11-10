@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/owl.carousel.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
-    <link href="css/app.css?t=123" rel="stylesheet" />
+    <link href="css/app.css?t=125" rel="stylesheet" />
     <link href="css/all.min.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
@@ -52,6 +52,24 @@
         </nav>
         <div class="bg_body"></div>
         <div id="myalert"></div>
+        <!-- Modal -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Системное сообщение</h5>
+                        <button type="button" id="modal_close" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn_alertOk" type="button" class="btn btn-primary" style="min-width: 75px;">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
         <div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
             <main class="bd-main order-1">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
@@ -62,22 +80,54 @@
 
     <!-- Scripts -->
     <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <script src="/js/jquery.min.js"></script>
     <script src="/js/popper.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
 
-    <script src="/js/owl-carousel.js"></script>
-
-    <script src="/js/tabs.js"></script>
-    <script src="/js/popup.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.4/mobile-detect.min.js"></script>
 
    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>
+
+    <script type="text/javascript">
+        function alertMsg(message, type, href) {
+            var body_modal = $('#alertModal').find('.modal-body');
+            var header = $('#alertModal').find('.modal-header');
+
+            $(header).addClass("modal-header-" + type);
+
+            if (type == "warning") {
+                $(body_modal).html(`<i class="fa-solid fa-triangle-exclamation" style="color: #d50707;"></i> ${message}`);
+                setTimeout(function () {
+                    $("#modal_close").click();
+                }, 15000);
+            }
+            else {
+                $(body_modal).html(`<i class="fa-solid fa-circle-info"></i> ${message}`);
+            }
+
+            $('#btn_alertOk').click(function () {
+                if (href != '') {
+                    location.href = href;
+                }
+                else {
+                    $("#modal_close").click();
+                }
+            });
+
+            $("#alertButton").click();
+        }
+    </script>
     <script src="app.js" type="module"></script>
     <script type="module">
         import { getMessaging, onMessage, getToken } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging.js";
 
         const messaging = getMessaging();
         var registration = null;
+        let detect = new MobileDetect(window.navigator.userAgent)
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -120,7 +170,9 @@
                 });
             }
         }).catch((err) => {
-            Myalert("Включите поддержку уведомлений в вашем браузере для этого сайта", 'warning', 5);
+            if (detect.mobile() == null) {
+                Myalert("Включите поддержку уведомлений в вашем браузере для этого сайта", 'warning', 5);
+            }
         });
 
         export function Myalert(message, type, time) {
@@ -217,9 +269,30 @@
             menu.click();
         });
 
-        CheckPermission();
 
+        if (detect.mobile() == null) {
+            CheckPermission();
+        }        
+    </script>
+    <script type="text/javascript">
+        function getMessage(messageID) {
+            var body_modal = $('#modalQuest').find('.modal-body');
 
+            $.post("/get/message",
+                {
+                    messageID: messageID,
+                })
+                .done(function (result, status, xhr) {
+                    if (result.indexOf('error') > -1) {
+                        alert(result);
+                    }
+                    else {
+                        $(body_modal).html(result);
+                    }
+                }).fail(function (xhr, status, error) {
+                    alert(error);
+                });
+        }
     </script>
 </body>
 </html>

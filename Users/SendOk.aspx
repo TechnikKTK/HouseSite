@@ -40,7 +40,12 @@
                 <use xlink:href="info-fill" />
             </svg>
             <div>
-                <span id="alert_text">Ваша заявка успешно отправлена!</span>
+                <span id="alert_text">Ваше обращение зарегистрировано! Номер:
+                    <%if (Page.Request.QueryString["messID"] != null)
+                      {  %>
+                      <%=Page.Request.QueryString["messID"] %>
+                    <%} %>
+                </span>
             </div>
            <div style="margin-top: 10px; text-align: center">
                 <span id="alert_timer">Вы будете перенаправлены на главную через 5...</span>

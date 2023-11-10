@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Web.UI.WebControls;
 using System.Web.Security;
-using System.Web.Profile;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.IO;
-using System.Security.Cryptography;
-using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 public partial class Admin_Users : System.Web.UI.Page
 {
-    private string SearchText = "";
-
     private MembershipUserCollection allRegisteredUsers = Membership.GetAllUsers();
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -22,8 +17,7 @@ public partial class Admin_Users : System.Web.UI.Page
         {
             lblOnlineUsers.Text = Membership.GetNumberOfUsersOnline().ToString();
             lblTotalUsers.Text = allRegisteredUsers.Count.ToString();
-            //string[] alph = "A;B;C;D;E;F;G;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z;All".Split(';');
-            string[] alph = "А;Б;В;Г;Д;Е;Ё;Ж;З;И;Й;К;Л;М;О;П;Р;С;Т;У;Ф;Х;Ц;Ш;Щ;Э;Ю;Я;ВСЕ".Split(';');
+            string[] alph = "А;Б;В;Г;Д;Е;Ё;Ж;З;И;Й;К;Л;М;Н;О;П;Р;С;Т;У;Ф;Х;Ц;Ч;Ш;Щ;Э;Ю;Я;ВСЕ".Split(';');
             rptAlphabetBar.DataSource = alph;
             rptAlphabetBar.DataBind();
         }
@@ -31,23 +25,25 @@ public partial class Admin_Users : System.Web.UI.Page
 
     protected void rptAlphabetBar_ItemCommand(object source, RepeaterCommandEventArgs e)
     {
-        gvUsers.Attributes.Add("SearchByEmail", false.ToString());
-        gvUsers.Attributes.Add("SearchByAuto", false.ToString());
-        if (e.CommandArgument.ToString().Length == 1)
+        var alfa = e.CommandArgument.ToString();
+
+        hiddenType.Value = "0";
+
+        if (alfa == "ВСЕ")
         {
-            gvUsers.Attributes.Add("SearchText", e.CommandArgument.ToString() + "%");
-            this.BindAllUsers(false);
+            hiddenAlfa.Value = "";
+            this.BindAllUsers(0,reloadAllUsers: false);
         }
         else
         {
-            gvUsers.Attributes.Add("SearchText", "");
-            this.BindAllUsers(false);
+            hiddenAlfa.Value = alfa;
+            this.BindAllUsers(0, alfabet: true, alfa: e.CommandArgument.ToString(), reloadAllUsers: false);
         }
     }
 
     protected void ChangeLockPost(object sender, CommandEventArgs e)
     {
-        int row = -1;
+        var admin = Membership.GetUser();
         string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
         try
         {
@@ -90,14 +86,142 @@ public partial class Admin_Users : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "Page_Load \n" + ex + "\n");
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
         }
 
-        BindAllUsers(true);
+        
+        bool isAlfabet = hiddenAlfa.Value != ""? true: false;
+        string alfa = hiddenAlfa.Value;
+        int type = int.Parse(hiddenType.Value);
+       
+
+        BindAllUsers(type, alfabet: isAlfabet, alfa: alfa, reloadAllUsers: true);
     }
 
     Guid userID = Guid.Empty;
+
+    protected void ChangeBan(object sender, CommandEventArgs e)
+    {
+        var admin = Membership.GetUser();
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        try
+        {
+            userID = Guid.Parse(e.CommandArgument.ToString());
+
+            MembershipUser user = Membership.GetUser(userID);
+            user.IsApproved = !user.IsApproved;
+            Membership.UpdateUser(user);
+
+        }
+        catch (Exception ex)
+        {
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
+        }
+
+        bool isAlfabet = hiddenAlfa.Value != "" ? true : false;
+        string alfa = hiddenAlfa.Value;
+        int type = int.Parse(hiddenType.Value);
+
+
+        BindAllUsers(type, alfabet: isAlfabet, alfa: alfa, reloadAllUsers: true);
+    }
+
+    protected void DeleteUser(object sender, CommandEventArgs e)
+    {
+        var admin = Membership.GetUser();
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        try
+        {
+            userID = Guid.Parse(e.CommandArgument.ToString());
+
+            MembershipUser user = Membership.GetUser(userID);
+
+            using (SqlConnection _connection = new SqlConnection(connect_str))
+            {
+                _connection.Open();
+
+                SqlCommand cmd = new SqlCommand("Delete FROM hs_Users WHERE UserId=@UserId", _connection);
+                cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
+                cmd.ExecuteNonQuery();
+
+                cmd = new SqlCommand("Delete FROM hs_Messages WHERE UserId=@UserId", _connection);
+                cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
+                cmd.ExecuteNonQuery();
+
+                cmd = new SqlCommand("Delete FROM hs_UsersNotify WHERE UserId=@UserId", _connection);
+                cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
+                cmd.ExecuteNonQuery();
+
+                cmd = new SqlCommand("Delete FROM hs_TokenDevices WHERE UserId=@UserId", _connection);
+                cmd.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = (Guid)user.ProviderUserKey;
+                cmd.ExecuteNonQuery();
+
+                _connection.Close();
+            }
+
+            Membership.DeleteUser(user.UserName, true);
+        }
+        catch (Exception ex)
+        {
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
+        }
+
+        bool isAlfabet = hiddenAlfa.Value != "" ? true : false;
+        string alfa = hiddenAlfa.Value;
+        int type = int.Parse(hiddenType.Value);
+
+
+        BindAllUsers(type, alfabet: isAlfabet, alfa: alfa, reloadAllUsers: true);
+    }
+
 
     protected string GetLockPost(string uid)
     {
@@ -107,8 +231,17 @@ public partial class Admin_Users : System.Web.UI.Page
         return "/images/" + barrier + ".png";
     }
 
+    protected string GetBan(string uid)
+    {
+        string barrier = "ban";
+        if (GetBanValue(uid) == 1) barrier = "check";
+
+        return "/images/" + barrier + ".svg";
+    }
+
     protected int GetLockValue(string uid)
     {
+        var admin = Membership.GetUser();
         string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
         bool barrier = false;
         try
@@ -138,151 +271,193 @@ public partial class Admin_Users : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "Page_Load \n" + ex + "\n");
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
         }
+        return barrier ? 1 : 0;
+    }
 
+    protected int GetBanValue(string uid)
+    {
+        var admin = Membership.GetUser();
+        string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+        bool barrier = false;
+        try
+        {
+            userID = Guid.Parse(uid);
+            MembershipUser user = Membership.GetUser(userID);
+
+            if (user != null)
+            {
+                return user.IsApproved ? 1 : 0;
+            }
+            else return 0;
+        }
+        catch (Exception ex)
+        {
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
+        }
         return barrier ? 1 : 0;
     }
 
 
-    private void BindAllUsers(bool reloadAllUsers)
+    private void BindAllUsers(int typeSearch, bool alfabet = false, string alfa="", bool reloadAllUsers = false)
     {
-        MembershipUserCollection allUsers = null;
-        if (reloadAllUsers)
-            allUsers = Membership.GetAllUsers();
-        
-        string searchText = "";
-        if (!string.IsNullOrEmpty(gvUsers.Attributes["SearchText"]))
-            searchText = gvUsers.Attributes["SearchText"];
-        bool searchByEmail = false;
-        bool searchByAuto = false;
-        if (!string.IsNullOrEmpty(gvUsers.Attributes["SearchByEmail"]))
-        {
-            searchByEmail = bool.Parse(gvUsers.Attributes["SearchByEmail"]);
-            searchByAuto = bool.Parse(gvUsers.Attributes["SearchByAuto"]);
-        }
-        if (searchText.Length > 0)
-        {
-            if (searchByEmail)
-                allUsers = Membership.FindUsersByEmail(searchText);
-            else if(searchByAuto)
-                allUsers = Membership.FindUsersByEmail(FindUserByAuto(searchText));
-            else
-                allUsers = Membership.FindUsersByName(searchText);
-        }
-        else
-        {
-            allUsers = allRegisteredUsers;
-        }
-        gvUsers.DataSource = allUsers;
-        gvUsers.DataBind();
-    }
+        var admin = Membership.GetUser();
 
-    private string FindUserByAuto(string searchText)
-    {
-        string ruAlfabet = "авкорнмсхует";
-        string enAlfabet = "abkophmcxyet";
+        var cmdText = "SELECT [UserName]," +
+            "         (CHARINDEX('_',[UserName],4) - CHARINDEX('_',[UserName]))," +
+                      " CONVERT(int,SUBSTRING([UserName],4, CAST(CASE WHEN " +
+                      "(CHARINDEX('_',[UserName],4) - CHARINDEX('_',[UserName])) <= 0" +
+                      " THEN CHARINDEX('_',[UserName])" +
+                      " ELSE CHARINDEX('_',[UserName],4) - (CHARINDEX('_',[UserName]) +1) END as int)), 0)" +
+                      " as FlatNum, [hs_Users].*" +
+                      "FROM [aspnet_Users] " +
+                      "INNER JOIN [hs_Users] ON [aspnet_Users].[UserId] = [hs_Users].[UserId]";
 
-        string txt = searchText.ToLower();
-        string ru_text = "";
-        string eng_text = "";
+        var where = "";
 
-        foreach (var symbol in txt)
+        switch (typeSearch)
         {
-            eng_text += symbol;
-            foreach (var item in ruAlfabet)
-            {
-                if (eng_text.Contains(item))
+            case 0:
+                if (alfabet)
                 {
-                    eng_text = eng_text.Replace(item, enAlfabet[ruAlfabet.IndexOf(item)]);
+                    where = string.Format(" Where [Name] like '{0}%' Or [LastName] like '{0}%' ",
+                        alfa);
                 }
-            }
-        }
-        foreach (var symbol in txt)
-        {
-            ru_text += symbol;
-
-            foreach (var item in enAlfabet)
-            {
-                if (ru_text.Contains(item))
+                else
                 {
-                    ru_text = ru_text.Replace(item, ruAlfabet[enAlfabet.IndexOf(item)]);
+                    where = string.Format(" Where [Name] like '%{0}%' OR [LastName] like '%{0}%'",
+                        txtSearch.Text);
                 }
-            }
+                break;
+
+            case 1:
+                string ruAlfabet = "авкорнмсхует";
+                string enAlfabet = "abkophmcxyet";
+
+                string txt = txtSearch.Text.ToLower();
+                string ru_text = "";
+                string eng_text = "";
+
+                foreach (var symbol in txt)
+                {
+                    eng_text += symbol;
+                    foreach (var item in ruAlfabet)
+                    {
+                        if (eng_text.Contains(item))
+                        {
+                            eng_text = eng_text.Replace(item, enAlfabet[ruAlfabet.IndexOf(item)]);
+                        }
+                    }
+                }
+                eng_text = eng_text.Replace(" ", "");
+
+                foreach (var symbol in txt)
+                {
+                    ru_text += symbol;
+                    foreach (var item in enAlfabet)
+                    {
+                        if (ru_text.Contains(item))
+                        {
+                            ru_text = ru_text.Replace(item, ruAlfabet[enAlfabet.IndexOf(item)]);
+                        }
+                    }
+                }
+
+                ru_text = ru_text.Replace(" ", "");
+
+                where = string.Format(" Where [AutoNumber] like '%{0}%' OR [AutoNumber] like '%{0}%'",
+                    ru_text, eng_text);
+                break;
+
+            case 2:
+                where = string.Format(" Where [UserName] like '%{0}%'",
+                        txtSearch.Text);
+                break;
         }
 
-        string result = "";
+
         string connect_str = ConfigurationManager.ConnectionStrings["migConnectionString"].ConnectionString;
+
         try
         {
             using (SqlConnection _connection = new SqlConnection(connect_str))
             {
-                _connection.Open();
-                SqlCommand cmd = new SqlCommand("Select Email From hs_Users  Where LOWER(AutoNumber) lIKE @auto OR LOWER(AutoNumber) lIKE @auto_en", _connection);
-                cmd.Parameters.AddWithValue("@auto", ru_text);
-                cmd.Parameters.AddWithValue("@auto_en", eng_text);
+                var adapter = new SqlDataAdapter(_connection.CreateCommand());
+                adapter.SelectCommand.CommandText = cmdText + where+ " Order by [FlatNum]";
 
-                var email = cmd.ExecuteScalar();
-                _connection.Close();
 
-                if (email != null)
-                {
-                    result = email.ToString();
-                }
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                repeatUsers.DataSource = dataTable;
+                repeatUsers.DataBind();
             }
         }
         catch (Exception ex)
         {
-            string base_ = System.Web.HttpContext.Current.Server.MapPath("~\\Catch");
-            File.AppendAllText(base_ + "\\_exc.txt", DateTime.Now + "btnCreateUser_Click \n" + ex + "\n");
+            if (admin != null)
+            {
+                HouseSiteService.SaveLogError((Guid)admin.ProviderUserKey, ex.Message, ex.StackTrace, connect_str, obj =>
+                {
+                    var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                    ClientScript.RegisterStartupScript(
+                      this.GetType(),
+                      Guid.NewGuid().ToString(), href);
+                });
+            }
+            else
+            {
+                var href = "<script>setTimeout(function(){ window.location.href = '/home'; }, 500);</script>";
+                ClientScript.RegisterStartupScript(
+                  this.GetType(),
+                  Guid.NewGuid().ToString(), href);
+            }
         }
-
-        return result;
     }
-
+   
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        bool searchByEmail = (ddlUserSearchTypes.SelectedValue == "0");
-        bool searchByAuto = (ddlUserSearchTypes.SelectedValue == "2");
-
-        gvUsers.Attributes.Add("SearchText", "%" + txtSearchText.Text + "%");
-        gvUsers.Attributes.Add("SearchByEmail", searchByEmail.ToString());
-        gvUsers.Attributes.Add("SearchByAuto", searchByAuto.ToString());
-        BindAllUsers(false);
+        hiddenType.Value = ddlUserSearchTypes.SelectedValue;
+        int typeSearch = int.Parse(hiddenType.Value);
+        
+        BindAllUsers(typeSearch, reloadAllUsers: false);
     }
 
-    protected void gvUsers_RowDeleting(object sender, GridViewDeleteEventArgs e)
-    {
-        string userName = gvUsers.DataKeys[e.RowIndex].Value.ToString();
-        ProfileManager.DeleteProfile(userName);
-        Membership.DeleteUser(userName);
-        BindAllUsers(true);
-        lblTotalUsers.Text = allRegisteredUsers.Count.ToString();
-    }
-
-    protected void gvUsers_RowCreated(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-           ImageButton btn = e.Row.Cells[7].Controls[0] as ImageButton;
-           btn.OnClientClick = "if (confirm('Выдействительно хотите удалить пользователя?') == false) return false;";
-        }
-    }
 
     protected void selectTypeSearch(object sender, EventArgs e)
     {
-        SearchText = ddlUserSearchTypes.SelectedValue;
-    }
-
-    protected string GetPlaceHolder()
-    {
-        return SearchText == "E-mail" ? "Например: vasya@ya.ru" : "Например: Василий";
-    }
-
-
-    protected void changeBarrier_Click(object sender, EventArgs e)
-    {
-
+        hiddenType.Value = ddlUserSearchTypes.SelectedValue;
     }
 }

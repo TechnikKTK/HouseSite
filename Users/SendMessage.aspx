@@ -13,12 +13,15 @@
     <li class="nav-item">
         <a class="nav-link" href="/notify">Уведомления</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/messages">Мои обращения</a>
+    </li>
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle active" aria-current="page" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Действия
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Действия
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="/phone-by-auto">Получить номер по авто</a></li>
-            <li><a class="dropdown-item" href="#">Отправить сообщение администратору</a></li>
+            <li><a class="dropdown-item" href="/phone-by-auto">Получить телефон владельца авто</a></li>
+            <li><a class="dropdown-item active" aria-current="page" href="#">Отправить сообщение администратору</a></li>
         </ul>
     </li>
 
